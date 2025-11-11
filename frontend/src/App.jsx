@@ -16,9 +16,7 @@ function App() {
   
   // IMPORTANT: Use localhost when testing on same computer
   // Use ws://192.168.X.X:3000 when connecting from other devices on LAN
-//   const WEBSOCKET_URL = "ws://localhost:3000";
-    const WEBSOCKET_URL = "ws://192.168.8.108:3000"; // Your LAN IP address
-
+  const WEBSOCKET_URL = "ws://localhost:3000";
 
   // Animate username box entrance
   useEffect(() => {
