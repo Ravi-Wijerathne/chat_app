@@ -115,11 +115,13 @@ body {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 1 !important;
 }
 
 .chat-header h2 {
   font-size: 1.5rem;
   font-weight: 600;
+  opacity: 1 !important;
 }
 
 .status-indicator {
@@ -128,6 +130,7 @@ body {
   gap: 8px;
   font-size: 0.9rem;
   color: #aaa;
+  opacity: 1 !important; /* Ensure it's always visible */
 }
 
 .status-dot {

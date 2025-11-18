@@ -122,16 +122,6 @@ function App() {
         easing: "easeOutQuad",
         duration: 500
       });
-
-      // Animate header elements
-      anime({
-        targets: ".chat-header h2, .status-indicator",
-        opacity: [0, 1],
-        translateY: [-20, 0],
-        easing: "easeOutQuad",
-        duration: 600,
-        delay: anime.stagger(100)
-      });
     }
   }, [showChat]);
 
