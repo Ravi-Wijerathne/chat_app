@@ -8,6 +8,8 @@ html, body, #root {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  position: fixed;
+  overscroll-behavior: none;
 }
 
 body {
@@ -166,11 +168,134 @@ body {
 
 .sidebar-empty { font-size: .75rem; opacity: .6; text-align: center; padding: 12px 6px; }
 
+/* Responsive Design for Mobile - Portrait */
 @media (max-width: 800px) {
-  .chat-layout { flex-direction: column; }
-  .sidebar { width: 100%; flex-direction: row; overflow-x: auto; height: auto; }
-  .user-list { flex-direction: row; overflow-x: auto; flex: none; }
-  .sidebar-item { flex: 0 0 auto; }
+  .chat-layout { 
+    flex-direction: column; 
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile */
+  }
+  
+  .sidebar { 
+    width: 100%; 
+    flex-direction: row; 
+    overflow-x: auto; 
+    overflow-y: hidden;
+    height: auto; 
+    padding: 10px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+  
+  .user-list { 
+    flex-direction: row; 
+    overflow-x: auto; 
+    overflow-y: hidden;
+    flex: none;
+    gap: 8px;
+  }
+  
+  .sidebar-item { 
+    flex: 0 0 auto; 
+    white-space: nowrap;
+    padding: 6px 12px;
+  }
+  
+  .chat-container {
+    height: calc(100vh - 80px);
+    height: calc(100dvh - 80px);
+  }
+  
+  .chat-header {
+    padding: 10px 15px;
+    flex-shrink: 0;
+  }
+  
+  .chat-header h2 {
+    font-size: 1.1rem;
+  }
+  
+  .status-indicator {
+    font-size: 0.8rem;
+  }
+  
+  .chat-box {
+    padding: 15px 10px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+  
+  .input-area {
+    padding: 10px;
+    flex-shrink: 0;
+  }
+  
+  .input-area input {
+    padding: 10px 14px;
+    font-size: 0.95rem;
+  }
+  
+  .input-area button {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Landscape mode on mobile */
+@media (max-width: 800px) and (orientation: landscape) {
+  .chat-layout {
+    flex-direction: row;
+  }
+  
+  .sidebar {
+    width: 200px;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100vh;
+    height: 100dvh;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    border-bottom: none;
+  }
+  
+  .user-list {
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .sidebar-item {
+    white-space: normal;
+    padding: 8px 10px;
+  }
+  
+  .chat-container {
+    height: 100vh;
+    height: 100dvh;
+  }
+  
+  .chat-header {
+    padding: 8px 15px;
+  }
+  
+  .chat-header h2 {
+    font-size: 1rem;
+  }
+  
+  .chat-box {
+    padding: 10px;
+  }
+  
+  .input-area {
+    padding: 8px 10px;
+  }
 }
 
 /* Chat Header */
@@ -197,7 +322,7 @@ body {
   gap: 8px;
   font-size: 0.9rem;
   color: #aaa;
-  opacity: 1 !important; /* Ensure it's always visible */
+  opacity: 1 !important;
 }
 
 .status-dot {
@@ -258,10 +383,13 @@ body {
 .chat-box {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .chat-box::-webkit-scrollbar {
@@ -458,21 +586,71 @@ body {
   }
 }
 
+/* Very small phones */
 @media (max-width: 480px) {
   .chat-header {
-    padding: 12px 15px;
+    padding: 10px 12px;
+  }
+  
+  .chat-header h2 {
+    font-size: 1rem;
+  }
+  
+  .status-indicator {
+    font-size: 0.75rem;
+    gap: 5px;
+  }
+  
+  .status-dot {
+    width: 8px;
+    height: 8px;
   }
 
   .chat-box {
-    padding: 15px;
+    padding: 12px 8px;
+  }
+  
+  .msg {
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }
 
   .input-area {
-    padding: 12px 15px;
+    padding: 8px;
+    gap: 6px;
+  }
+  
+  .input-area input {
+    padding: 10px 12px;
+    font-size: 0.9rem;
   }
 
   .input-area button {
-    padding: 12px 18px;
+    padding: 10px 16px;
     font-size: 0.9rem;
+  }
+  
+  .username-box {
+    padding: 25px 18px;
+  }
+
+  .username-box h1 {
+    font-size: 1.3rem;
+  }
+  
+  .username-box input {
+    font-size: 0.9rem;
+    padding: 12px 16px;
+  }
+}
+
+/* Tablet portrait */
+@media (min-width: 801px) and (max-width: 1024px) {
+  .sidebar {
+    width: 200px;
+  }
+  
+  .msg {
+    max-width: 75%;
   }
 }
