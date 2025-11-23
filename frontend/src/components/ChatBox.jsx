@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import anime from "animejs";
 import MessageBubble from "./MessageBubble";
 
-function ChatBox({ messages, currentUsername }) {
+function ChatBox({ messages, currentUsername, mode = 'group', peerUser = null, selfId = null }) {
   const chatBoxRef = useRef(null);
   const emptyStateRef = useRef(null);
 
@@ -31,19 +31,32 @@ function ChatBox({ messages, currentUsername }) {
     }
   }, [messages]);
 
+  // Filter messages based on mode
+  let visibleMessages = messages.filter(m => {
+    if (mode === 'group') {
+      return m.type === 'system' || m.type === 'chat';
+    }
+    if (mode === 'private' && peerUser && selfId) {
+      return m.type === 'private' && (
+        (m.fromId === selfId && m.toId === peerUser.clientId) ||
+        (m.fromId === peerUser.clientId && m.toId === selfId)
+      );
+    }
+    return false;
+  });
+
   return (
     <div className="chat-box" ref={chatBoxRef}>
-      {messages.length === 0 && (
+      {visibleMessages.length === 0 && (
         <div className="empty-state" ref={emptyStateRef}>
-          <p>👋 No messages yet. Start the conversation!</p>
+          <p>{mode === 'group' ? '👋 No messages yet. Start the conversation!' : '🔒 No messages in this private chat yet.'}</p>
         </div>
       )}
-      
-      {messages.map((msg, index) => (
+      {visibleMessages.map((msg, index) => (
         <MessageBubble
           key={index}
           message={msg}
-          isOwnMessage={msg.username === currentUsername}
+          isOwnMessage={mode === 'group' ? (msg.username === currentUsername) : (msg.type === 'private' && msg.fromId === selfId)}
         />
       ))}
     </div>

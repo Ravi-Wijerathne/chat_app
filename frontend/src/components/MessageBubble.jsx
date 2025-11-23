@@ -4,8 +4,7 @@ function MessageBubble({ message, isOwnMessage }) {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  // System messages (welcome, notifications, etc.)
-  if (message.type === "system") {
+  if (message.type === 'system') {
     return (
       <div className="msg system-msg">
         <span className="system-text">{message.message}</span>
@@ -13,16 +12,35 @@ function MessageBubble({ message, isOwnMessage }) {
     );
   }
 
-  // Regular chat messages
+  if (message.type === 'error') {
+    return (
+      <div className="msg system-msg">
+        <span className="system-text">⚠️ {message.message}</span>
+      </div>
+    );
+  }
+
+  if (message.type === 'private') {
+    const header = isOwnMessage ? `You → ${message.toUsername}` : `${message.fromUsername} → You`;
+    return (
+      <div className={`msg ${isOwnMessage ? 'own-msg' : 'other-msg'}`}>
+        <div className="msg-header">
+          <span className="username">{header}</span>
+          <span className="timestamp">{formatTime(message.timestamp)}</span>
+        </div>
+        <div className="msg-content">{message.message}</div>
+      </div>
+    );
+  }
+
+  // group chat message
   return (
-    <div className={`msg ${isOwnMessage ? "own-msg" : "other-msg"}`}>
+    <div className={`msg ${isOwnMessage ? 'own-msg' : 'other-msg'}`}>
       <div className="msg-header">
         <span className="username">{message.username}</span>
         <span className="timestamp">{formatTime(message.timestamp)}</span>
       </div>
-      <div className="msg-content">
-        {message.message}
-      </div>
+      <div className="msg-content">{message.message}</div>
     </div>
   );
 }
