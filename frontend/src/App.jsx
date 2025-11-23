@@ -2,15 +2,19 @@ import { useEffect, useState, useRef } from "react";
 import anime from "animejs";
 import ChatBox from "./components/ChatBox";
 import InputField from "./components/InputField";
+import Sidebar from "./components/Sidebar";
 
 function App() {
   const [socket, setSocket] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]); // all messages (system, chat, private)
   const [username, setUsername] = useState("");
   const [isUsernameSet, setIsUsernameSet] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState("disconnected");
   const [connectionError, setConnectionError] = useState("");
   const [showChat, setShowChat] = useState(false);
+  const [users, setUsers] = useState([]); // list of connected users {clientId, username}
+  const [clientId, setClientId] = useState(null);
+  const [activeChatUser, setActiveChatUser] = useState(null); // null => group chat, else user object
   const usernameBoxRef = useRef(null);
   const chatContainerRef = useRef(null);
   
@@ -35,23 +39,43 @@ function App() {
 
   useEffect(() => {
     if (!isUsernameSet) return;
-    
-    setConnectionError(""); // Clear any previous errors
 
+    setConnectionError("");
     console.log("Connecting to WebSocket server...");
     const ws = new WebSocket(WEBSOCKET_URL);
-    
+
     ws.onopen = () => {
       console.log("✅ Connected to server");
       setConnectionStatus("connected");
+      // Send register packet
+      ws.send(JSON.stringify({ type: "register", username }));
     };
 
     ws.onmessage = (e) => {
-      try {
-        const data = JSON.parse(e.data);
-        setMessages(prev => [...prev, data]);
-      } catch (error) {
-        console.error("Error parsing message:", error);
+      let data;
+      try { data = JSON.parse(e.data); } catch { return; }
+      switch (data.type) {
+        case "register_ack": {
+          setClientId(data.clientId);
+          break;
+        }
+        case "userlist": {
+          setUsers(data.users);
+          // If activeChatUser disconnected, reset to group
+          if (activeChatUser && !data.users.find(u => u.clientId === activeChatUser.clientId)) {
+            setActiveChatUser(null);
+          }
+          break;
+        }
+        case "system":
+        case "chat":
+        case "private":
+        case "error": {
+          setMessages(prev => [...prev, data]);
+          break;
+        }
+        default:
+          break;
       }
     };
 
@@ -64,18 +88,11 @@ function App() {
     ws.onclose = () => {
       console.log("❌ Disconnected from server");
       setConnectionStatus("disconnected");
-      if (connectionStatus !== "error") {
-        setConnectionError("Disconnected from server");
-      }
+      if (connectionStatus !== "error") setConnectionError("Disconnected from server");
     };
 
     setSocket(ws);
-
-    return () => {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.close();
-      }
-    };
+    return () => { if (ws.readyState === WebSocket.OPEN) ws.close(); };
   }, [isUsernameSet]);
 
   // Animate new messages
@@ -124,12 +141,12 @@ function App() {
   }, [showChat]);
 
   const sendMessage = (text) => {
-    if (socket && socket.readyState === WebSocket.OPEN && text.trim()) {
-      const message = {
-        username: username,
-        message: text
-      };
-      socket.send(JSON.stringify(message));
+    if (!socket || socket.readyState !== WebSocket.OPEN || !text.trim()) return;
+    if (activeChatUser) {
+      // private message
+      socket.send(JSON.stringify({ type: "private", toId: activeChatUser.clientId, message: text }));
+    } else {
+      socket.send(JSON.stringify({ type: "chat", message: text }));
     }
   };
 
@@ -161,23 +178,33 @@ function App() {
   console.log("Rendering chat interface. Connection status:", connectionStatus);
   console.log("Messages:", messages);
   return (
-    <div className="chat-container" ref={chatContainerRef}>
-      <div className="chat-header">
-        <h2>💬 Local Chat</h2>
-        <div className="status-indicator">
-          <span className={`status-dot ${connectionStatus}`}></span>
-          <span>{connectionStatus === "connected" ? "Connected" : "Disconnected"}</span>
+    <div className="chat-layout">
+      <Sidebar
+        users={users}
+        selfId={clientId}
+        activeUser={activeChatUser}
+        onSelectUser={(u) => setActiveChatUser(u)}
+        onSelectGroup={() => setActiveChatUser(null)}
+        connectionStatus={connectionStatus}
+      />
+      <div className="chat-container" ref={chatContainerRef}>
+        <div className="chat-header">
+          <h2>{activeChatUser ? `🔒 Chat with ${activeChatUser.username}` : "💬 Group Chat"}</h2>
+          <div className="status-indicator">
+            <span className={`status-dot ${connectionStatus}`}></span>
+            <span>{connectionStatus === "connected" ? "Connected" : "Disconnected"}</span>
+          </div>
         </div>
+        {connectionError && (<div className="error-banner">⚠️ {connectionError}</div>)}
+        <ChatBox
+          messages={messages}
+          currentUsername={username}
+          mode={activeChatUser ? 'private' : 'group'}
+          peerUser={activeChatUser}
+          selfId={clientId}
+        />
+        <InputField onSend={sendMessage} />
       </div>
-
-      {connectionError && (
-        <div className="error-banner">
-          ⚠️ {connectionError}
-        </div>
-      )}
-
-      <ChatBox messages={messages} currentUsername={username} />
-      <InputField onSend={sendMessage} />
     </div>
   );
 }
