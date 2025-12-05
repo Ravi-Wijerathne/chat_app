@@ -45,8 +45,12 @@ npm run dev
 
 ## Usage
 
-1. Open http://localhost:5173
-2. Enter username
-3. Start chatting
+**Host device:**
+- Open http://localhost:5173
 
-Access from other devices on your network using your LAN IP.
+**Other devices on network:**
+- Open http://192.168.8.108:5173
+
+Then:
+1. Enter username
+2. Start chatting
