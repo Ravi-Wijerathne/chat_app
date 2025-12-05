@@ -49,7 +49,7 @@ npm run dev
 - Open http://localhost:5173
 
 **Other devices on network:**
-- Open http://192.168.8.108:5173
+- Open http://192.X.X.X:5173 (Replace with your IP Address)
 
 Then:
 1. Enter username
