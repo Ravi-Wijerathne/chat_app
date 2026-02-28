@@ -17,12 +17,18 @@ Real-time chat application for local networks using WebSockets.
 
 ## Quick Start
 
-**Windows:**
+**Cross-platform (Python 3 — recommended):**
+```bash
+python start_chat_app.py
+```
+`start_chat_app.py` is a cross-platform automated startup script that checks every prerequisite, offers to install missing ones, and launches both the backend and frontend automatically. It works on Windows, Linux, and macOS.
+
+**Windows (batch):**
 ```bash
 start_chat_app.bat
 ```
 
-**Linux/macOS:**
+**Linux/macOS (shell):**
 ```bash
 ./start_chat_app.sh
 ```
