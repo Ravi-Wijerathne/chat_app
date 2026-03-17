@@ -19,8 +19,8 @@ function App() {
   const chatContainerRef = useRef(null);
   
   // IMPORTANT: Use localhost when testing on same computer
-  // Use ws://192.168.X.X:3000 when connecting from other devices on LAN
-  const WEBSOCKET_URL = "ws://localhost:3000";
+  // Automatically detects if you are on localhost or LAN by using window.location.hostname
+  const WEBSOCKET_URL = `ws://${window.location.hostname}:3000`;
 
   // Animate username box entrance
   useEffect(() => {

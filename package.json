@@ -1,0 +1,28 @@
+{
+  "name": "chat_app",
+  "version": "1.0.0",
+  "description": "Real-time chat application for local networks using WebSockets.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm run test:run",
+    "test:e2e": "playwright test",
+    "test:all": "npm run test:backend && npm run test:frontend && npm run test:e2e"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ravi-Wijerathne/chat_app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Ravi-Wijerathne/chat_app/issues"
+  },
+  "homepage": "https://github.com/Ravi-Wijerathne/chat_app#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
+}
