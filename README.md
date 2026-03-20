@@ -49,6 +49,25 @@ npm install
 npm run dev
 ```
 
+## Testing
+
+**Backend Tests (Jest):**
+```bash
+cd backend
+npm test
+```
+
+**Frontend Tests (Vitest):**
+```bash
+cd frontend
+npm test
+```
+
+**End-to-End Tests (Playwright):**
+```bash
+npm run test:e2e
+```
+
 ## Usage
 
 **Host device:**
